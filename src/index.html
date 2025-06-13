@@ -1,28 +1,807 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
   <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="favicon.png">
-
-    <title>App</title>
+    <title>Pantai Cacalan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body>
     <header>
-      <div class="main-header container">
-        <a class="brand-name" href="#/">App</a>
-
-        <nav id="navigation-drawer" class="navigation-drawer">
-          <ul id="nav-list" class="nav-list">
-            <li><a href="#/">Beranda</a></li>
-            <li><a href="#/about">About</a></li>
-          </ul>
-        </nav>
-
-        <button id="drawer-button" class="drawer-button">☰</button>
+      <nav>
+        <div id="welcome" class="logo-container">
+          <img src="/images/logo.png" alt="Logo Pantai Cacalan" />
+          <span>Pantai Cacalan</span>
+        </div>
+        <ul id="nav-menu">
+          <li><a href="#beranda">Beranda</a></li>
+          <li><a href="#rekomendasi">Rekomendasi</a></li>
+          <li><a href="#detail-tempat">Detail Tempat</a></li>
+          <li><a href="#ulasan">Ulasan</a></li>
+        </ul>
+      </nav>
+      <div class="hero-content">
+        <p class="welcome-text">SELAMAT DATANG DI</p>
+        <h1>PANTAI CACALAN</h1>
+        <p>Temukan momen tak terlupakan di tepi laut. Wisata nyaman, terjangkau, dan penuh cerita.</p>
+        <button onclick="openModal()" class="reservasi-btn">Reservasi</button>
+        <div id="myModal" class="modal" style="display: none">
+          <div class="modal-content">
+            <h2>Formulir Reservasi</h2>
+            <form id="reservasiForm">
+              <label>Nama:</label>
+              <input type="text" id="nama" required />
+              <label>No. WhatsApp:</label>
+              <input type="tel" id="whatsapp" required />
+              <label>Pilihan Tempat:</label>
+              <select id="tempat" required>
+                <option value="">-- Pilih Tempat --</option>
+                <option value="AULA">AULA</option>
+                <option value="KANO">KANO</option>
+                <option value="KARAOKE">KARAOKE</option>
+                <option value="PONDOK TEDUH">PONDOK TEDUH</option>
+                <option value="LAHAN TIMUR">LAHAN TIMUR</option>
+                <option value="LAHAN BARAT">LAHAN BARAT</option>
+              </select>
+              <label>Tanggal Masuk:</label>
+              <input type="date" id="tglMasuk" required onchange="aturTanggalKeluarMin()" />
+              <label>Tanggal Keluar:</label>
+              <input type="date" id="tglKeluar" required />
+              <label>Metode Pembayaran:</label>
+              <select id="pembayaran" required>
+                <option value="">-- Pilih Metode --</option>
+                <option value="BRI">BRI</option>
+                <option value="BCA">BCA</option>
+                <option value="Shopee Pay">Shopee Pay</option>
+              </select>
+              <label>Catatan:</label>
+              <textarea id="catatan" rows="3"></textarea>
+              <div class="actions">
+                <button type="button" onclick="closeModal()">Batalkan</button>
+                <button type="submit">Kirim</button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </header>
+    <script>
+      function openModal() {
+        document.getElementById("myModal").style.display = "flex";
+      }
+      function closeModal() {
+        document.getElementById("myModal").style.display = "none";
+      }
+      function aturTanggalKeluarMin() {
+        const masuk = document.getElementById("tglMasuk");
+        const keluar = document.getElementById("tglKeluar");
+        keluar.min = masuk.value;
+        if (keluar.value && keluar.value < masuk.value) {
+          keluar.value = "";
+        }
+      }
+      const form = document.getElementById("reservasiForm");
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const nama = document.getElementById("nama").value;
+        const whatsapp = document.getElementById("whatsapp").value;
+        const tempat = document.getElementById("tempat").value;
+        const tglMasuk = document.getElementById("tglMasuk").value;
+        const tglKeluar = document.getElementById("tglKeluar").value;
+        const pembayaran = document.getElementById("pembayaran").value;
+        const note = document.getElementById("catatan").value;
+        // Format pesan WhatsApp
+        const pesanWA =
+          `*Reservasi Baru Telah Diterima*\n\n` +
+          `🔹 *Nama:* ${nama}\n` +
+          `🔹 *WhatsApp:* ${whatsapp}\n` +
+          `🔹 *Tempat:* ${tempat}\n` +
+          `🔹 *Tanggal:* ${tglMasuk} s/d ${tglKeluar}\n` +
+          `🔹 *Metode Pembayaran:* ${pembayaran}\n` +
+          `🔹 *Catatan:* ${note || "-"}\n\n` +
+          `Mohon menunggu konfirmasi ketersediaan jadwal dan tempat.\n` +
+          `Pembayaran *hanya dilakukan* setelah reservasi dikonfirmasi.\n` +
+          `Silakan kirim pesan ini langsung tanpa perlu mengubah apa pun.`;
+        // Kirim ke WhatsApp Admin
+        const nomorAdmin = "6283197392024";
+        const urlWA = `https://wa.me/${nomorAdmin}?text=${encodeURIComponent(pesanWA)}`;
+        window.open(urlWA, "_blank");
+        // Kirim ke Google Spreadsheet
+        const { google } = require("googleapis");
+        const sheets = google.sheets("v4");
 
-    <main id="main-content" class="main-content"></main>
+        // Data reservasi contoh
+        const values = [
+          [
+            timestamp, // Kolom A: Timestamp
+            nama, // Kolom B: Nama
+            whatsapp, // Kolom C: No. WhatsApp
+            tempat, // Kolom D: Tempat
+            tglMasuk, // Kolom E: Tanggal Masuk
+            tglKeluar, // Kolom F: Tanggal Keluar
+            "", // Kolom G: Jumlah Tamu (kosongkan jika tidak ada input)
+            pembayaran, // Kolom H: Metode Pembayaran
+            note || "-", // Kolom I: Note
+            "-", // Kolom J: Review (default)
+            "-", // Kolom K: Rating (default)
+          ],
+        ];
+
+        // Fungsi untuk menyimpan data ke Google Spreadsheet
+        async function saveReservation() {
+          try {
+            // Autentikasi dengan service account
+            const auth = new google.auth.GoogleAuth({
+              keyFile: "C:\Users\ASVS\Downloads\cacalan-462704-2639493f5362.json", // Path ke file credentials JSON
+              scopes: ["https://www.googleapis.com/robot/v1/metadata/x509/cacalango%40cacalan-462704.iam.gserviceaccount.com"],
+            });
+
+            const client = await auth.getClient();
+            const spreadsheetId = "1vE_AJMFAqfQJkR4pkNtMRiSFi72qLJtNAXjjzb6R7aw"; // Ganti dengan ID spreadsheet Anda
+
+            // Format data reservasi
+            const timestamp = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+            const values = [[timestamp, reservationData.nama, reservationData.whatsapp, reservationData.tempat, reservationData.tglmasuk, reservationData.tglkeluar, reservationData.note]];
+
+            // Kirim data ke Google Sheets
+            const response = await sheets.spreadsheets.values.append({
+              auth: client,
+              spreadsheetId: "1vE_AJMFAqfQJkR4pkNtMRiSFi72qLJtNAXjjzb6R7aw",
+              range: "Sheet1!A:G", // Sesuaikan dengan nama sheet dan range
+              valueInputOption: "RAW",
+              resource: { values },
+            });
+
+            console.log("Data reservasi berhasil disimpan:", response.data);
+          } catch (error) {
+            console.error("Error saat menyimpan data:", error.message);
+          }
+        }
+
+        // Jalankan fungsi
+        saveReservation();
+      });
+
+      // Fungsionalitas Pop-up Detail
+      function openPopupDetail(button) {
+        const modal = document.getElementById("detailModal");
+        const title = button.getAttribute("data-title");
+        const desc = button.getAttribute("data-desc");
+        const img = button.getAttribute("data-img");
+        const harga = button.getAttribute("data-harga");
+        const kapasitas = button.getAttribute("data-kapasitas");
+        const akses = button.getAttribute("data-akses");
+        const sarana = button.getAttribute("data-sarana");
+        const jenis = button.getAttribute("data-jenis");
+
+        modal.querySelector("#popupTitle").innerText = title;
+        modal.querySelector("#popupDesc").innerText = desc;
+        modal.querySelector("#popupGallery").innerHTML = `<img src="${img}" alt="${title}" style="width:100%; height:auto; border-radius:8px;">`;
+        modal.querySelector("#popupHarga").innerText = harga;
+        modal.querySelector("#popupKapasitas").innerText = kapasitas;
+        modal.querySelector("#popupAkses").innerText = akses || "-"; // Menampilkan data akses
+
+        const fiturListElement = modal.querySelector("#popupFitur");
+        fiturListElement.innerHTML = ""; // Kosongkan dulu
+        if (sarana) {
+          sarana.split(",").forEach((item) => {
+            const li = document.createElement("li");
+            li.textContent = item.trim();
+            fiturListElement.appendChild(li);
+          });
+        }
+
+        const jenisListElement = modal.querySelector("#popupJenisAcara");
+        jenisListElement.innerHTML = ""; // Kosongkan dulu
+        if (jenis) {
+          jenis.split(",").forEach((item) => {
+            const li = document.createElement("li");
+            li.textContent = item.trim();
+            jenisListElement.appendChild(li);
+          });
+        }
+
+        modal.style.display = "flex"; // Menampilkan modal
+      }
+
+      function closePopupDetail() {
+        document.getElementById("detailModal").style.display = "none";
+      }
+
+      // Event listeners sebaiknya di dalam DOMContentLoaded untuk memastikan elemen ada
+      document.addEventListener("DOMContentLoaded", function () {
+        // Tambahkan event listener ke semua tombol detail
+        document.querySelectorAll(".detail-btn").forEach((button) => {
+          button.addEventListener("click", function () {
+            openPopupDetail(this);
+          });
+        });
+
+        document.querySelector("#detailModal .popup-detail-close").addEventListener("click", closePopupDetail);
+        document.querySelector("#detailModal .back-to-list-btn").addEventListener("click", closePopupDetail);
+
+        // Tambahkan event listener untuk tombol reservasi di pop-up detail
+        const popupReservasiBtn = document.getElementById("popupReservasiBtn");
+        if (popupReservasiBtn) {
+          popupReservasiBtn.addEventListener("click", function () {
+            closePopupDetail();
+            openModal();
+            const landingReservasiBtn = document.querySelector(".reservasi-btn");
+            if (landingReservasiBtn) {
+              landingReservasiBtn.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+          });
+        }
+      });
+    </script>
+    <section id="beranda" class="section-about">
+      <img src="/images/identitas.jpg" alt="Pantai Cacalan Hutan" />
+      <div class="text">
+        <h2>Mengapa Pantai Cacalan?</h2>
+        <p>Temukan pesona pantai yang bersih dan asri, suasana damai yang menenangkan, serta fasilitas lengkap yang sempurna untuk liburan bersama keluarga, sahabat, ataupun pasangan.</p>
+        <div class="info-boxes">
+          <div class="info-box">
+            <strong>Informasi</strong>
+            Buka: Setiap Hari<br />
+            Jam: 08.00 - 22.00 WIB<br />
+            Tiket: 8k/weekday, 10k/weekend<br />
+            Lokasi: Kalipuro, Banyuwangi
+          </div>
+          <div class="info-box">
+            <strong>Fasilitas Umum</strong>
+            Warung UMKM<br />
+            Karaoke<br />
+            Parkir Luas<br />
+            Toilet & Mushola
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="rekomendasi" class="rekomendasi-section">
+      <h2>Rekomendasi Tempat</h2>
+      <div class="rekomendasi-cards">
+        <div class="rekomendasi-card">
+          <img src="/images/aula.jpg" alt="AULA" class="rekomendasi-img" />
+          <div class="reservasi-desc">Aula - Seru untuk anak dan keluarga</div>
+          <a href="#welcome"><button onclick="openModal()" class="btn-reservasi">Reservasi</button></a>
+        </div>
+        <div class="rekomendasi-card">
+          <img src="/images/kano.jpg" alt="KANO" class="rekomendasi-img" />
+          <div class="reservasi-desc">Kano - Nikmati keseruan bermain air dan jelajahi pantai</div>
+          <a href="#welcome"><button onclick="openModal()" class="btn-reservasi">Reservasi</button></a>
+        </div>
+        <div class="rekomendasi-card">
+          <img src="/images/karaoke.jpg" alt="KARAOKE" class="rekomendasi-img" />
+          <div class="reservasi-desc">Karaoke - Lepaskan penat dan bernyanyi bersama teman dan keluarga</div>
+          <a href="#welcome"><button onclick="openModal()" class="btn-reservasi">Reservasi</button></a>
+        </div>
+      </div>
+    </section>
+    <section id="detail-tempat" class="reservasi-section">
+      <h2>Detail Tempat Reservasi</h2>
+      <div class="reservasi-grid-ubah">
+        <div class="reservasi-card-ubah">
+          <img src="/images/kano.jpg" alt="Kano" class="reservasi-img-ubah" />
+          <div class="reservasi-text-content">
+            <h3 class="reservasi-title-ubah">Kano</h3>
+            <p class="reservasi-desc-ubah">Tempat kano berada di dekat badan air seperti sungai atau danau, yang menawarkan pemandangan keindahan alam dan dikelilingi pohon.</p>
+            <button
+              class="detail-btn"
+              aria-label="Lihat detail Kano"
+              data-title="Kano"
+              data-desc="Tempat kano berada di dekat badan air seperti sungai atau danau, yang menawarkan pemandangan keindahan alam dan dikelilingi pohon."
+              data-img="/images/kano.jpg"
+              data-harga="Rp150.000/jam"
+              data-kapasitas="50 orang"
+              data-akses="Dekat toilet dan musala"
+              data-sarana="Kursi, meja, sound system"
+              data-jenis="Liburan, rekreasi keluarga"
+            >
+              Detail
+            </button>
+          </div>
+        </div>
+
+        <div class="reservasi-card-ubah">
+          <img src="/images/aula.jpg" alt="Aula" class="reservasi-img-ubah" />
+          <div class="reservasi-text-content">
+            <h3 class="reservasi-title-ubah">Aula</h3>
+            <p class="reservasi-desc-ubah">Aula Pantai Cacalan merupakan ruang serbaguna semi-terbuka yang terletak tepat di tepi pantai.</p>
+            <button
+              class="detail-btn"
+              aria-label="Lihat detail Aula"
+              data-title="Aula Pantai Cacalan"
+              data-desc="Aula Pantai Cacalan merupakan ruang serbaguna semi-terbuka yang terletak tepat di tepi pantai, menawarkan suasana alami dengan hembusan angin laut dan pemandangan birunya samudra. Dirancang dengan perpaduan elemen modern dan tradisional—seperti penggunaan bambu, kayu lokal, serta struktur terbuka—tempat ini sangat cocok untuk berbagai jenis acara, mulai dari rapat formal, pelatihan, seminar, hingga acara keluarga, reuni, atau perayaan pantai. Dengan kapasitas hingga 300 orang, aula ini mendukung kenyamanan kelompok indah maupun outdoor, dilengkapi fasilitas pendukung seperti Sound System, proyektor, kursi, serta akses makan dari area piknik. Keunikan alam sekitar menjadikannya juga ideal untuk kegiatan yoga, workshop kreatif, atau event bertema alam terbuka. Aula Pantai Cacalan memberikan kebebasan bagi Anda untuk mengatur suasana dan konsep acara sesuai kebutuhan."
+              data-img="/images/aula.jpg"
+              data-harga="500K / Hari"
+              data-kapasitas="50/100 Orang"
+              data-akses="Akses mudah, dekat area parkir"
+              data-sarana="Sound system, proyektor, kursi, meja dll"
+              data-jenis="Rapat, seminar, pelatihan, reuni, perayaan, gathering keluarga, kegiatan kreatif"
+            >
+              Detail
+            </button>
+          </div>
+        </div>
+
+        <div class="reservasi-card-ubah">
+          <img src="/images/lahan timur.jpg" alt="Lahan Timur" class="reservasi-img-ubah" />
+          <div class="reservasi-text-content">
+            <h3 class="reservasi-title-ubah">Lahan Timur</h3>
+            <p class="reservasi-desc-ubah">Cocok untuk gathering, wedding, dan event besar lainnya.</p>
+            <button
+              class="detail-btn"
+              aria-label="Lihat detail Lahan Timur"
+              data-title="Lahan Timur"
+              data-desc="Lahan Timur adalah area terbuka luas yang terletak di sisi timur pantai, cocok untuk acara gathering besar, pernikahan outdoor, festival, atau event komunitas. Dengan pemandangan laut lepas dan area hijau yang luas, Lahan Timur menawarkan fleksibilitas tinggi untuk berbagai konsep acara. Kapasitasnya dapat menampung ratusan hingga ribuan orang tergantung penataan. Akses mudah dari area parkir utama dan dekat dengan fasilitas toilet serta area katering."
+              data-img="/images/lahan timur.jpg"
+              data-harga="Harga negotiable tergantung skala acara"
+              data-kapasitas="500+ orang"
+              data-akses="Akses sangat mudah dari area parkir utama"
+              data-sarana="Area terbuka, dapat disiapkan tenda, panggung, sound system (sesuai permintaan)"
+              data-jenis="Gathering, wedding, festival, konser, event komunitas, outbound"
+            >
+              Detail
+            </button>
+          </div>
+        </div>
+
+        <div class="reservasi-card-ubah">
+          <img src="/images/lahan barat.jpg" alt="Lahan Barat" class="reservasi-img-ubah" />
+          <div class="reservasi-text-content">
+            <h3 class="reservasi-title-ubah">Lahan Barat</h3>
+            <p class="reservasi-desc-ubah">Nyaman untuk piknik dan acara santai dengan pemandangan sunset.</p>
+            <button
+              class="detail-btn"
+              aria-label="Lihat detail Lahan Barat"
+              data-title="Lahan Barat"
+              data-desc="Lahan Barat merupakan area yang lebih privat dan tenang, ideal untuk piknik keluarga, sesi foto pre-wedding, atau acara santai lainnya. Area ini memiliki pohon-pohon rindang yang memberikan keteduhan dan spot strategis untuk menikmati pemandangan matahari terbenam yang spektakuler. Kapasitasnya lebih kecil, cocok untuk kelompok kecil hingga sedang (sekitar 50-100 orang). Fasilitas dasar seperti toilet umum dan akses ke warung UMKM tersedia di dekatnya."
+              data-img="/images/lahan barat.jpg"
+              data-harga="Rp50.000 - Rp200.000 (tergantung durasi & jumlah)"
+              data-kapasitas="50-100 orang"
+              data-akses="Akses jalan setapak dari area parkir"
+              data-sarana="Area duduk alami, pohon rindang, pemandangan sunset"
+              data-jenis="Piknik keluarga, sesi foto, pertemuan santai, acara kecil"
+            >
+              Detail
+            </button>
+          </div>
+        </div>
+
+        <div class="reservasi-card-ubah">
+          <img src="/images/pondok teduh.jpg" alt="Pondok Teduh" class="reservasi-img-ubah" />
+          <div class="reservasi-text-content">
+            <h3 class="reservasi-title-ubah">Pondok Teduh</h3>
+            <p class="reservasi-desc-ubah">Pondok-pondok kecil dan nyaman untuk bersantai sambil menikmati hidangan.</p>
+            <button
+              class="detail-btn"
+              aria-label="Lihat detail Pondok Teduh"
+              data-title="Pondok Teduh"
+              data-desc="Pondok Teduh adalah kumpulan gazebo atau pondok kecil yang tersebar di area pantai, dirancang untuk memberikan kenyamanan maksimal bagi pengunjung yang ingin bersantap atau bersantai. Setiap pondok menawarkan suasana yang tenang dan privat, ideal untuk keluarga kecil atau pasangan. Anda bisa menikmati hidangan laut segar atau makanan ringan dari warung UMKM terdekat sambil menikmati semilir angin pantai. Fasilitas mencakup meja dan kursi di dalam pondok."
+              data-img="/images/pondok teduh.jpg"
+              data-harga="Tergantung pondok dan durasi (mulai Rp30.000/jam)"
+              data-kapasitas="2-10 orang per pondok"
+              data-akses="Mudah dijangkau di area warung makan"
+              data-sarana="Meja, kursi, atap teduh"
+              data-jenis="Makan siang/malam santai, istirahat sejenak, gathering kecil"
+            >
+              Detail
+            </button>
+          </div>
+        </div>
+
+        <div class="reservasi-card-ubah">
+          <img src="/images/karaoke.jpg" alt="Karaoke" class="reservasi-img-ubah" />
+          <div class="reservasi-text-content">
+            <h3 class="reservasi-title-ubah">Karaoke</h3>
+            <p class="reservasi-desc-ubah">Fasilitas karaoke modern untuk hiburan seru bersama teman dan keluarga.</p>
+            <button
+              class="detail-btn"
+              aria-label="Lihat detail Karaoke"
+              data-title="Karaoke"
+              data-desc="Fasilitas karaoke Pantai Cacalan dilengkapi dengan sistem suara dan layar proyektor modern, menawarkan ruang yang nyaman untuk bernyanyi dan bersenang-senang. Ideal untuk merayakan ulang tahun kecil, kumpul-kumpul teman, atau sekadar melepas penat dengan lagu favorit. Ruang karaoke dapat menampung kelompok kecil hingga menengah (sekitar 10-20 orang). Tersedia pilihan lagu yang beragam dari berbagai genre."
+              data-img="/images/karaoke.jpg"
+              data-harga="Rp75.000/jam"
+              data-kapasitas="10-20 orang"
+              data-akses="Dekat area hiburan dan warung"
+              data-sarana="Sound system, layar proyektor, mic, daftar lagu"
+              data-jenis="Hiburan keluarga, kumpul teman, perayaan kecil"
+            >
+              Detail
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="detailModal" class="popup-detail-modal">
+      <div class="popup-detail-content">
+        <span class="popup-detail-close">&times;</span>
+        <div class="popup-detail-header">
+          <button class="back-to-list-btn"></button>
+        </div>
+        <div class="popup-detail-main">
+          <h2 id="popupTitle">Nama Tempat</h2>
+          <div class="popup-detail-gallery" id="popupGallery"></div>
+          <div class="popup-detail-info-grid">
+            <div class="info-item"><strong>Kapasitas:</strong> <span id="popupKapasitas"></span></div>
+            <div class="info-item"><strong>Harga Sewa:</strong> <span id="popupHarga"></span></div>
+            <div class="info-item"><strong>Akses:</strong> <span id="popupAkses"></span></div>
+          </div>
+
+          <div class="popup-section">
+            <h3>Deskripsi</h3>
+            <p id="popupDesc"></p>
+          </div>
+
+          <div class="popup-section">
+            <h3>Fitur Utama</h3>
+            <ul id="popupFitur"></ul>
+          </div>
+
+          <div class="popup-section">
+            <h3>Jenis Acara yang Cocok</h3>
+            <ul id="popupJenisAcara"></ul>
+          </div>
+        </div>
+        <button class="reservasi-btn-popup" id="popupReservasiBtn">Reservasi</button>
+      </div>
+    </div>
+    <section id="ulasan" class="py-12 px-4 max-w-6xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-gray-800 mb-3">Ulasan Pelanggan</h2>
+        <div class="w-20 h-1 bg-amber-400 mx-auto"></div>
+      </div>
+
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <span class="text-lg font-semibold text-gray-700">Total Ulasan: <span id="totalReviews" class="text-amber-500">5</span></span>
+          <div class="flex items-center mt-1">
+            <span class="text-amber-500 font-bold mr-1">4.2</span>
+            <div class="flex">
+              <i class="fas fa-star text-amber-400"></i>
+              <i class="fas fa-star text-amber-400"></i>
+              <i class="fas fa-star text-amber-400"></i>
+              <i class="fas fa-star text-amber-400"></i>
+              <i class="fas fa-star-half-alt text-amber-400"></i>
+            </div>
+          </div>
+        </div>
+        <button onclick="openReviewModal()" class="bg-amber-500 hover:bg-amber-600 text-white font-medium py-2 px-6 rounded-lg transition duration-300 flex items-center"><i class="fas fa-plus mr-2"></i> Tambah Ulasan</button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Review Items will be added here by JavaScript -->
+      </div>
+
+      <div class="text-center mt-10" id="loadMoreContainer">
+        <button onclick="loadMoreReviews()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg transition duration-300 inline-flex items-center">
+          <span>Muat Lebih Banyak</span>
+          <i class="fas fa-chevron-down ml-2"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50 hidden">
+      <div class="bg-white rounded-lg max-w-md w-full p-6 relative max-h-[90vh] overflow-y-auto">
+        <button onclick="closeReviewModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Tulis Ulasan Anda</h3>
+
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2">Nama</label>
+          <input type="text" id="reviewerName" class="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-amber-400 outline-none transition" />
+        </div>
+
+        <div class="mb-6">
+          <label class="block text-gray-700 font-medium mb-2">Rating <span id="ratingText" class="text-amber-500 ml-1 text-sm">(0/5)</span></label>
+          <div class="star-rating flex justify-center">
+            <span onclick="rate(1)" class="star text-2xl mx-1 cursor-pointer"><i class="far fa-star"></i></span>
+            <span onclick="rate(2)" class="star text-2xl mx-1 cursor-pointer"><i class="far fa-star"></i></span>
+            <span onclick="rate(3)" class="star text-2xl mx-1 cursor-pointer"><i class="far fa-star"></i></span>
+            <span onclick="rate(4)" class="star text-2xl mx-1 cursor-pointer"><i class="far fa-star"></i></span>
+            <span onclick="rate(5)" class="star text-2xl mx-1 cursor-pointer"><i class="far fa-star"></i></span>
+          </div>
+          <input type="hidden" id="ratingValue" value="0" />
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2">Foto Bukti</label>
+          <div class="flex items-center justify-center w-full">
+            <label class="flex flex-col w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:bg-gray-50 transition">
+              <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                <i class="fas fa-cloud-upload-alt text-2xl text-gray-500 mb-2"></i>
+                <p class="text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Klik untuk upload</span> atau drag & drop</p>
+                <p class="text-xs text-gray-500 mt-1">JPEG, PNG (Max. 2MB)</p>
+              </div>
+              <input id="reviewImage" type="file" accept="image/*" class="hidden" />
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <label class="block text-gray-700 font-medium mb-2">Ulasan Anda</label>
+          <textarea id="reviewText" rows="4" class="w-full text-base px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-amber-400 outline-none transition"></textarea>
+        </div>
+
+        <button onclick="submitReview()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-medium py-3 px-6 rounded-lg transition duration-300">Kirim Ulasan</button>
+      </div>
+    </div>
+
+    <script>
+      // Review data
+      const reviews = [
+        {
+          name: "Kim Soo Hyun",
+          date: "3 Juni 2025",
+          rating: 1,
+          text: "Tempatnya sejuk dan nyaman, pasti balik lagi!",
+        },
+        {
+          name: "Kim Soo Hyun",
+          date: "2 Juni 2025",
+          rating: 5,
+          text: "Cocok untuk healing bareng keluarga dan teman.",
+        },
+        {
+          name: "Lee Man Hoo",
+          date: "31 Mei 2025",
+          rating: 4,
+          text: "Tempatnya sejuk dan nyaman, pasti balik lagi!",
+        },
+        {
+          name: "Kim Soo Hyun",
+          date: "30 Mei 2025",
+          rating: 4,
+          text: "Cocok untuk healing bareng keluarga dan teman.",
+        },
+        {
+          name: "Budi Santoso",
+          date: "28 Mei 2025",
+          rating: 5,
+          text: "Sangat memuaskan, pelayanan ramah dan tempat bersih.",
+        },
+      ];
+
+      let currentlyDisplayed = 0;
+      const reviewsPerLoad = 4;
+
+      // Initialize reviews on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        loadInitialReviews();
+        document.getElementById("totalReviews").textContent = reviews.length;
+      });
+
+      // Load initial set of reviews
+      function loadInitialReviews() {
+        const reviewsContainer = document.querySelector(".grid");
+        const initialReviews = Math.min(reviewsPerLoad, reviews.length);
+
+        reviews.slice(0, initialReviews).forEach((review) => {
+          reviewsContainer.appendChild(createReviewElement(review));
+        });
+
+        currentlyDisplayed = initialReviews;
+
+        // Hide "Load More" button if all reviews are displayed
+        if (currentlyDisplayed >= reviews.length) {
+          document.getElementById("loadMoreContainer").classList.add("hidden");
+        }
+      }
+
+      // Load more reviews when button is clicked
+      function loadMoreReviews() {
+        const reviewsContainer = document.querySelector(".grid");
+        const nextReviews = reviews.slice(currentlyDisplayed, currentlyDisplayed + reviewsPerLoad);
+
+        nextReviews.forEach((review) => {
+          reviewsContainer.appendChild(createReviewElement(review));
+        });
+
+        currentlyDisplayed += nextReviews.length;
+
+        // Hide "Load More" button if all reviews are displayed
+        if (currentlyDisplayed >= reviews.length) {
+          document.getElementById("loadMoreContainer").classList.add("hidden");
+        }
+      }
+
+      // Create a review element
+      function createReviewElement(review) {
+        const reviewItem = document.createElement("div");
+        reviewItem.className = "bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition duration-300";
+
+        // Create star rating
+        let stars = "";
+        for (let i = 1; i <= 5; i++) {
+          stars += i <= review.rating ? '<i class="fas fa-star text-amber-400"></i>' : '<i class="far fa-star text-amber-400"></i>';
+        }
+
+        reviewItem.innerHTML = `
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h4 class="font-bold text-gray-800">${review.name}</h4>
+                        <p class="text-gray-500 text-sm">${review.date}</p>
+                    </div>
+                    <div class="flex">
+                        ${stars}
+                    </div>
+                </div>
+                <p class="text-gray-700 mb-3">"${review.text}"</p>
+                ${review.image ? `<img src="${review.image}" alt="Review image" class="w-full h-auto rounded-lg mb-3">` : ""}
+                <div class="flex justify-end mt-4">
+                    <button onclick="likeReview(this)" class="text-gray-500 hover:text-amber-500 mr-4">
+                        <i class="far fa-thumbs-up"></i>
+                        <span class="likes-count ml-1">0</span>
+                    </button>
+                </div>
+            `;
+
+        return reviewItem;
+      }
+
+      // Open review modal
+      function openReviewModal() {
+        document.getElementById("reviewModal").classList.remove("hidden");
+        document.getElementById("reviewModal").classList.add("visible");
+      }
+
+      // Close review modal
+      function closeReviewModal() {
+        document.getElementById("reviewModal").classList.remove("visible");
+        document.getElementById("reviewModal").classList.add("hidden");
+      }
+
+      // Rate stars
+      function rate(rating) {
+        const stars = document.querySelectorAll(".star-rating .star");
+        const ratingValue = document.getElementById("ratingValue");
+        const ratingText = document.getElementById("ratingText");
+
+        ratingValue.value = rating;
+        ratingText.textContent = `(${rating}/5)`;
+
+        stars.forEach((star, index) => {
+          if (index < rating) {
+            star.innerHTML = '<i class="fas fa-star"></i>';
+            star.classList.add("active");
+          } else {
+            star.innerHTML = '<i class="far fa-star"></i>';
+            star.classList.remove("active");
+          }
+        });
+      }
+
+      // Add hover effects to stars
+      document.querySelectorAll(".star-rating .star").forEach((star) => {
+        star.addEventListener("mouseover", function () {
+          const index = parseInt(this.getAttribute("onclick").match(/\d+/)[0]);
+          document.querySelectorAll(".star-rating .star").forEach((s, i) => {
+            if (i < index) {
+              s.classList.add("hovered");
+            } else {
+              s.classList.remove("hovered");
+            }
+          });
+        });
+
+        star.addEventListener("mouseout", function () {
+          document.querySelectorAll(".star-rating .star").forEach((s) => {
+            s.classList.remove("hovered");
+          });
+        });
+      });
+
+      // Submit a new review
+      function submitReview() {
+        const name = document.getElementById("reviewerName").value.trim();
+        const rating = parseInt(document.getElementById("ratingValue").value);
+        const text = document.getElementById("reviewText").value.trim();
+        const imageFile = document.getElementById("reviewImage").files[0];
+
+        if (!name || !rating || !text) {
+          alert("Harap isi semua field!");
+          return;
+        }
+
+        // Create new review object
+        let imageUrl = null;
+
+        if (imageFile) {
+          // Here you would typically upload the image to a server and get the URL
+          // For demo purposes, we'll just use a placeholder
+          imageUrl = URL.createObjectURL(imageFile);
+        }
+
+        const newReview = {
+          name: name,
+          date: new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
+          rating: rating,
+          text: text,
+          image: imageUrl,
+        };
+
+        // Add to reviews array
+        reviews.unshift(newReview);
+
+        // Update UI
+        document.querySelector(".grid").prepend(createReviewElement(newReview));
+        document.getElementById("totalReviews").textContent = reviews.length;
+
+        // Reset form
+        document.getElementById("reviewerName").value = "";
+        document.getElementById("reviewText").value = "";
+        document.getElementById("ratingValue").value = "0";
+        document.querySelectorAll(".star-rating .star").forEach((star) => {
+          star.innerHTML = '<i class="far fa-star"></i>';
+          star.classList.remove("active");
+        });
+
+        closeReviewModal();
+      }
+
+      // Like a review
+      function likeReview(button) {
+        const likeIcon = button.querySelector("i");
+        const likesCount = button.querySelector(".likes-count");
+
+        if (likeIcon.classList.contains("far")) {
+          likeIcon.classList.remove("far");
+          likeIcon.classList.add("fas");
+          likesCount.textContent = parseInt(likesCount.textContent) + 1;
+          likesCount.classList.add("text-amber-500");
+        } else {
+          likeIcon.classList.remove("fas");
+          likeIcon.classList.add("far");
+          likesCount.textContent = parseInt(likesCount.textContent) - 1;
+          if (parseInt(likesCount.textContent) <= 0) {
+            likesCount.classList.remove("text-amber-500");
+          }
+        }
+      }
+    </script>
+    <footer>
+      <div class="footer-content-wrapper">
+        <div class="logo-container">
+          <img src="/images/logo.png" alt="Logo" />
+          <span>Pantai Cacalan</span>
+        </div>
+        <p>Reservasi mudah, informasi lengkap, dan liburan lebih terencana</p>
+        <div class="social-media-footer">
+          <div class="social-icons-footer">
+            <a href="#" target="_blank" rel="noopener noreferrer" class="social-icon tiktok">
+              <i class="fab fa-tiktok"></i>
+              <span class="social-text">pantaicacalan_</span>
+            </a>
+            <a href="#" target="_blank" rel="noopener noreferrer" class="social-icon instagram">
+              <i class="fab fa-instagram"></i>
+              <span class="social-text">pantaicacalan_</span>
+            </a>
+            <a href="#" target="_blank" rel="noopener noreferrer" class="social-icon whatsapp">
+              <i class="fab fa-whatsapp"></i>
+              <span class="social-text">+62 811-9814-175</span>
+            </a>
+            <a href="mailto:example@example.com" class="social-icon email">
+              <i class="fas fa-envelope"></i>
+              <span class="social-text">cacalanbeach@gmail.com</span>
+            </a>
+          </div>
+        </div>
+        <p class="copyright-text">© 2025 Pantai Cacalan. Hak Cipta Dilindungi.</p>
+      </div>
+    </footer>
   </body>
 </html>
